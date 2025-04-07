@@ -1,10 +1,16 @@
-
 import React from 'react';
 import { ArrowUpRight, ArrowDownRight, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
-const BalanceCard: React.FC = () => {
+interface BalanceCardProps {
+  balance: number;
+}
+
+const BalanceCard: React.FC<BalanceCardProps> = ({ balance }) => {
+  const navigate = useNavigate();
+
   const copyUserId = () => {
     navigator.clipboard.writeText('CR12345678');
     toast.success('User ID copied to clipboard');
@@ -14,7 +20,7 @@ const BalanceCard: React.FC = () => {
     <div className="glass-card p-6 flex flex-col md:flex-row md:items-center md:justify-between animate-fade-in">
       <div className="space-y-1 mb-4 md:mb-0">
         <h2 className="text-lg font-medium text-muted-foreground">Total Balance</h2>
-        <p className="text-3xl font-bold">$12,456.78</p>
+        <p className="text-3xl font-bold">₹{balance.toFixed(2)}</p>
         <div className="flex items-center text-sm text-emerald-600">
           <ArrowUpRight className="h-4 w-4 mr-1" />
           <span>+5.23% this week</span>
@@ -26,7 +32,10 @@ const BalanceCard: React.FC = () => {
           <ArrowUpRight className="h-4 w-4 mr-2" />
           Deposit
         </Button>
-        <Button className="bg-blue-500 hover:bg-blue-600">
+        <Button 
+          className="bg-blue-500 hover:bg-blue-600"
+          onClick={() => navigate('/trades')}
+        >
           <ArrowDownRight className="h-4 w-4 mr-2" />
           Trade
         </Button>

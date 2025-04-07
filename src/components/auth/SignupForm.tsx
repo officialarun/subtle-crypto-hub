@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { authAPI } from '@/lib/api';
 
 const SignupForm: React.FC = () => {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ const SignupForm: React.FC = () => {
   const [referralCode, setReferralCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!phoneNumber || !password) {
@@ -22,12 +22,23 @@ const SignupForm: React.FC = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const response = await authAPI.signup({
+        phoneNumber,
+        password,
+        referralCode: referralCode || undefined
+      });
+      
+      // Store token in localStorage
+      localStorage.setItem('token', response.token);
+      
       toast.success('Account created successfully');
       navigate('/dashboard');
-    }, 1500);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Signup failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

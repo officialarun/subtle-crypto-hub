@@ -1,12 +1,14 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
+import { useNavigate, useLocation } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import Logo from '../Logo';
 
 const AuthCard: React.FC = () => {
-  const [currentView, setCurrentView] = useState<'login' | 'signup'>('login');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isSignup = location.pathname === '/signup';
 
   return (
     <div className="auth-card animate-fade-in">
@@ -17,16 +19,16 @@ const AuthCard: React.FC = () => {
       <div className="flex justify-center mb-6">
         <div className="inline-flex rounded-md shadow-sm">
           <Button
-            variant={currentView === 'login' ? 'default' : 'outline'}
-            className={`rounded-l-md ${currentView === 'login' ? '' : 'hover:bg-secondary'}`}
-            onClick={() => setCurrentView('login')}
+            variant={!isSignup ? 'default' : 'outline'}
+            className={`rounded-l-md ${!isSignup ? '' : 'hover:bg-secondary'}`}
+            onClick={() => navigate('/signin')}
           >
             Login
           </Button>
           <Button
-            variant={currentView === 'signup' ? 'default' : 'outline'}
-            className={`rounded-r-md ${currentView === 'signup' ? '' : 'hover:bg-secondary'}`}
-            onClick={() => setCurrentView('signup')}
+            variant={isSignup ? 'default' : 'outline'}
+            className={`rounded-r-md ${isSignup ? '' : 'hover:bg-secondary'}`}
+            onClick={() => navigate('/signup')}
           >
             Signup
           </Button>
@@ -34,7 +36,7 @@ const AuthCard: React.FC = () => {
       </div>
 
       <div className="animate-slide-up">
-        {currentView === 'login' ? <LoginForm /> : <SignupForm />}
+        {!isSignup ? <LoginForm /> : <SignupForm />}
       </div>
     </div>
   );

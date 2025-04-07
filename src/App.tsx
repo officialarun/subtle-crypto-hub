@@ -1,36 +1,59 @@
-
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import AuthPage from "./pages/AuthPage";
-import Dashboard from "./pages/Dashboard";
-import NotFound from "./pages/NotFound";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import AuthPage from './pages/AuthPage';
+import Dashboard from './pages/Dashboard';
+import { Profile } from './pages/Profile';
+import NotFound from './pages/NotFound';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import Trades from './pages/Trades';
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<AuthPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/trades" element={<Dashboard />} />
-          <Route path="/deposits" element={<Dashboard />} />
-          <Route path="/profile" element={<Dashboard />} />
-          <Route path="/history" element={<Dashboard />} />
-          <Route path="/settings" element={<Dashboard />} />
-          <Route path="/help" element={<Dashboard />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Navigate to="/signin" replace />} />
+            <Route path="/signin" element={<AuthPage />} />
+            <Route path="/signup" element={<AuthPage />} />
+            
+            {/* Protected Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/trades"
+              element={
+                <ProtectedRoute>
+                  <Trades />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
+        <Toaster />
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
