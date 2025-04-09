@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
+import depositRoutes from '../routes/depositRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -67,11 +68,28 @@ connectDB();
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/deposits', depositRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
+  console.error('Error details:', {
+    message: err.message,
+    stack: err.stack,
+    name: err.name,
+    code: err.code
+  });
+  
+  // If headers are already sent, delegate to the default Express error handler
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  // Send error response
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Something went wrong!',
+    error: process.env.NODE_ENV === 'development' ? err : {}
+  });
 });
 
 const PORT = process.env.PORT || 3000;

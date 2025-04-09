@@ -38,6 +38,19 @@ const AuthCard: React.FC = () => {
       <div className="animate-slide-up">
         {!isSignup ? <LoginForm /> : <SignupForm />}
       </div>
+
+      {!isSignup && (
+        <div className="mt-6 text-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-sm text-muted-foreground hover:text-primary"
+            onClick={() => navigate('/admin')}
+          >
+            Login as Admin
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
